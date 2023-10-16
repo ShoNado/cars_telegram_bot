@@ -10,7 +10,8 @@ var (
 	bot, _    = tgbotapi.NewBotAPI(api.GetApiToken())
 	adminList = []int64{
 		362859506, //лиза
-		231043417, //я
+		//231043417, //я
+
 	}
 )
 
