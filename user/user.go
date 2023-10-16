@@ -3,6 +3,7 @@ package user
 import (
 	api "cars_telegram_bot/handleAPI"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"log"
 )
 
 var (
@@ -10,19 +11,32 @@ var (
 )
 
 func HandleMessage(message *tgbotapi.Message) {
-	msg := tgbotapi.NewMessage(message.From.ID, "Ты юзер")
+	if message.IsCommand() {
+		handleCommand(message)
+		return
+	}
+	msg := tgbotapi.NewMessage(message.From.ID, "")
+
 	if _, err := bot.Send(msg); err != nil {
-		panic(err) // not correct way handle error, remake!
+		log.Printf("Не удалось ответить на сообщение")
+		panic(err)
 	}
 }
 
-func handleCommand(chatId int64, command string) error {
-	return nil
+func handleCommand(command *tgbotapi.Message) {
+	msg := tgbotapi.NewMessage(command.From.ID, "")
+
+	if _, err := bot.Send(msg); err != nil {
+		log.Printf("Не удалось ответить на команду")
+		panic(err)
+	}
 }
 
 func HandleButton(query *tgbotapi.CallbackQuery) {
-	msg := tgbotapi.NewMessage(query.From.ID, "Ты админ поздравляю")
+	msg := tgbotapi.NewMessage(query.From.ID, "")
+
 	if _, err := bot.Send(msg); err != nil {
-		panic(err) // not correct way handle error, remake!
+		log.Printf("Не удалось ответить на кнопку")
+		panic(err)
 	}
 }

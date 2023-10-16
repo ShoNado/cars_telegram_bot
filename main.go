@@ -32,7 +32,10 @@ func main() {
 	go receiveUpdates(ctx, updates)
 
 	// Wait for a newline symbol, then cancel handling updates
-	bufio.NewReader(os.Stdin).ReadBytes('\n')
+	_, err = bufio.NewReader(os.Stdin).ReadBytes('\n')
+	if err != nil {
+		panic(err)
+	}
 	cancel()
 }
 
