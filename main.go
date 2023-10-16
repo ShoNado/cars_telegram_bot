@@ -2,7 +2,7 @@ package main
 
 import (
 	"bufio"
-	"cars_telegram_bot/admin"
+	"cars_telegram_bot/Admin"
 	api "cars_telegram_bot/handleAPI"
 	"cars_telegram_bot/user"
 	"context"
@@ -55,11 +55,11 @@ func receiveUpdates(ctx context.Context, updates tgbotapi.UpdatesChannel) {
 
 func handleUpdate(update tgbotapi.Update) {
 
-	adminStatus := admin.CheckForAdmin(update.SentFrom().ID)
+	adminStatus := Admin.CheckForAdmin(update.SentFrom().ID)
 	switch {
 	// Handle messages
 	case update.Message != nil && adminStatus:
-		admin.HandleAdminMessage(update.Message)
+		Admin.HandleAdminMessage(update.Message)
 		break
 
 	case update.Message != nil && !adminStatus:
@@ -68,7 +68,7 @@ func handleUpdate(update tgbotapi.Update) {
 
 	// Handle button clicks
 	case update.CallbackQuery != nil && adminStatus:
-		admin.HandleAdminQuery(update.CallbackQuery)
+		Admin.HandleAdminQuery(update.CallbackQuery)
 		break
 
 	case update.CallbackQuery != nil && !adminStatus:

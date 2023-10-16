@@ -1,8 +1,8 @@
 package user
 
 import (
-	"cars_telegram_bot/carsAvailable"
-	"cars_telegram_bot/clientOrders"
+	"cars_telegram_bot/CarsAvailable"
+	"cars_telegram_bot/ClientOrders"
 	api "cars_telegram_bot/handleAPI"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
@@ -21,32 +21,33 @@ func HandleMessage(message *tgbotapi.Message) {
 		handleCommand(message)
 		return
 	}
-	msg := tgbotapi.NewMessage(message.From.ID, "work in progress")
+	msg := tgbotapi.NewMessage(message.From.ID, "")
 
 	switch message.Text {
 	case btn1:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
-		carsAvailable.ShowCarsList()
+		CarsAvailable.ShowCarsList(message, msg) //передаем туда msg чтобы удалить клавиатуру
 
 	case btn2:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
-		clientOrders.ClientOrders()
+		ClientOrders.ClientOrders(message, msg)
 
 	case btn3:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
-		clientOrders.ClientFavorites()
+		ClientOrders.ClientFavorites(message, msg)
 
 	case btn4:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
-		clientOrders.NewOrder()
+		ClientOrders.NewOrder(message, msg)
 
 	default:
 		msg.Text = "дефолтное сообщение"
+		if _, err := bot.Send(msg); err != nil {
+			log.Printf("Не удалось ответить на сообщение")
+			panic(err)
+		}
 	}
-	if _, err := bot.Send(msg); err != nil {
-		log.Printf("Не удалось ответить на сообщение")
-		panic(err)
-	}
+
 }
 
 func handleCommand(command *tgbotapi.Message) {

@@ -1,9 +1,9 @@
-package carsAvailable
+package CarsAvailable
 
 import (
 	api "cars_telegram_bot/handleAPI"
-	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"log"
 )
 
 var (
@@ -26,16 +26,34 @@ type Car struct {
 	Other        string  `json:"other,omitempty"`
 }
 
-func ShowCarsList() {
+func ShowCarsList(message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
+	msg.Text = "Список машин"
 
-	fmt.Println("список машин")
+	if _, err := bot.Send(msg); err != nil {
+		log.Printf("Не удалось ответить на сообщение")
+		panic(err)
+	}
+
 }
 
-func NewCar() {
-	honda := Car{Brand: "Honda", Model: "xr"}
-	fmt.Println("добавить машину", honda)
+func NewCar(message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
+	msg.Text = "Добавление новой машины"
+
+	if _, err := bot.Send(msg); err != nil {
+		log.Printf("Не удалось ответить на сообщение")
+		panic(err)
+	}
 }
 
 func carsAvailable() {
-	fmt.Println("вызываю список машин")
+
+}
+
+func CorrectCar(message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
+	msg.Text = "Редактирование старой машины"
+
+	if _, err := bot.Send(msg); err != nil {
+		log.Printf("Не удалось ответить на сообщение")
+		panic(err)
+	}
 }
