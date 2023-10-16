@@ -1,5 +1,5 @@
 package handleAPI
 
 func GetApiToken() string {
-	return "6371492060:AAGJvIz6K30ooHiQc5L61lU1mOp9vuhkOsY"
+	return "6447861811:AAE9w1wfKlzpQ0crMOaS72n3XmTasdFl30U"
 }

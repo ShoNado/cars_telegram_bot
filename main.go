@@ -51,24 +51,23 @@ func receiveUpdates(ctx context.Context, updates tgbotapi.UpdatesChannel) {
 }
 
 func handleUpdate(update tgbotapi.Update) {
-
+	adminStatus := admin.CheckForAdmin(update.SentFrom().ID)
 	switch {
 	// Handle messages
+	case update.Message != nil && adminStatus:
+		admin.HandleAdminMessage(update.Message)
+		break
 
-	case update.Message != nil:
-		if admin.CheckForAdmin(update.Message.From.ID) {
-			admin.HandleAdminMessage(update.Message)
-			break
-		}
+	case update.Message != nil && !adminStatus:
 		user.HandleMessage(update.Message)
 		break
 
 	// Handle button clicks
-	case update.CallbackQuery != nil:
-		if admin.CheckForAdmin(update.CallbackQuery.From.ID) {
-			admin.HandleAdminQuery(update.CallbackQuery)
-			break
-		}
+	case update.CallbackQuery != nil && adminStatus:
+		admin.HandleAdminQuery(update.CallbackQuery)
+		break
+
+	case update.CallbackQuery != nil && !adminStatus:
 		user.HandleButton(update.CallbackQuery)
 		break
 	}
