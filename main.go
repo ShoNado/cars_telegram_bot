@@ -54,6 +54,7 @@ func receiveUpdates(ctx context.Context, updates tgbotapi.UpdatesChannel) {
 }
 
 func handleUpdate(update tgbotapi.Update) {
+
 	adminStatus := admin.CheckForAdmin(update.SentFrom().ID)
 	switch {
 	// Handle messages

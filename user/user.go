@@ -21,7 +21,7 @@ func HandleMessage(message *tgbotapi.Message) {
 		handleCommand(message)
 		return
 	}
-	msg := tgbotapi.NewMessage(message.From.ID, "something wrong")
+	msg := tgbotapi.NewMessage(message.From.ID, "work in progress")
 
 	switch message.Text {
 	case btn1:
@@ -40,6 +40,8 @@ func HandleMessage(message *tgbotapi.Message) {
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 		clientOrders.NewOrder()
 
+	default:
+		msg.Text = "дефолтное сообщение"
 	}
 	if _, err := bot.Send(msg); err != nil {
 		log.Printf("Не удалось ответить на сообщение")
@@ -65,7 +67,11 @@ func handleCommand(command *tgbotapi.Message) {
 		)
 
 	case "help":
-		msg.Text = "0 блять помощи ПОМОГИТЕ"
+		msg.Text = "Список доступных команд: \n" +
+			"/start - перезапускает бота и вызывает основное меню \n" +
+			"/mycars - показывает информацию о вашем автомобиле и его статусе \n" +
+			"/order - новая заявка на подбор и заказ автомобиля \n" +
+			"\nЕсли у вас есть какие-то дополнительные вопросы можете связатся с нашим менеджером @blyaD1ma"
 	case "mycars":
 		msg.Text = "work in progress"
 	case "order":
@@ -81,7 +87,7 @@ func handleCommand(command *tgbotapi.Message) {
 }
 
 func HandleButton(query *tgbotapi.CallbackQuery) {
-	msg := tgbotapi.NewMessage(query.From.ID, "")
+	msg := tgbotapi.NewMessage(query.From.ID, "где ты нашел кнопку не понял")
 
 	if _, err := bot.Send(msg); err != nil {
 		log.Printf("Не удалось ответить на кнопку")
