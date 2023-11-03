@@ -2,6 +2,7 @@ package CarsAvailable
 
 import (
 	api "cars_telegram_bot/handleAPI"
+	"cars_telegram_bot/handleDatabase"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
 )
@@ -10,22 +11,6 @@ var (
 	bot, _ = tgbotapi.NewBotAPI(api.GetApiToken())
 )
 
-type Car struct {
-	Brand        string  `json:"brand,omitempty"`
-	Model        string  `json:"model,omitempty"`
-	Country      string  `json:"country,omitempty"`
-	Year         int     `json:"year,omitempty"`
-	Status       string  `json:"status,omitempty"`
-	Eniginetype  string  `json:"eniginetype,omitempty"`
-	Enginevolume float64 `json:"enginevolume,omitempty"`
-	Transmission string  `json:"transmission,omitempty"`
-	DriveType    string  `json:"drive_type,omitempty"`
-	Color        string  `json:"color,omitempty"`
-	Mileage      float64 `json:"mileage,omitempty"`
-	FavoriteNum  int     `json:"favoritenum,omitempty"`
-	Other        string  `json:"other,omitempty"`
-}
-
 func ShowCarsList(message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
 	msg.Text = "Список машин"
 
@@ -33,7 +18,7 @@ func ShowCarsList(message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
 		log.Printf("Не удалось ответить на сообщение")
 		panic(err)
 	}
-
+	carsAvailable()
 }
 
 func NewCar(message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
@@ -46,7 +31,7 @@ func NewCar(message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
 }
 
 func carsAvailable() {
-
+	handleDatabase.ConnectDB()
 }
 
 func CorrectCar(message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
@@ -56,4 +41,20 @@ func CorrectCar(message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
 		log.Printf("Не удалось ответить на сообщение")
 		panic(err)
 	}
+}
+
+type Car struct {
+	Brand        string  `json:"brand,omitempty" :"brand"`
+	Model        string  `json:"model,omitempty" :"model"`
+	Country      string  `json:"country,omitempty" :"country"`
+	Year         int     `json:"year,omitempty" :"year"`
+	Status       string  `json:"status,omitempty" :"status"`
+	Enginetype   string  `json:"enginetype,omitempty" :"enginetype"`
+	Enginevolume float64 `json:"enginevolume,omitempty" :"enginevolume"`
+	Transmission string  `json:"transmission,omitempty" :"transmission"`
+	DriveType    string  `json:"drive_type,omitempty" :"drive_type"`
+	Color        string  `json:"color,omitempty" :"color"`
+	Mileage      float64 `json:"mileage,omitempty" :"mileage"`
+	//FavoriteNum  int     `json:"favoritenum,omitempty" :"favorite_num"`
+	Other string `json:"other,omitempty" :"other"`
 }

@@ -13,7 +13,7 @@ var (
 	adminList = []int64{
 		362859506, //лиза
 		//231043417, //я
-		//дима
+		314539937, //дима
 	}
 	btn1 = "Список машин"
 	btn2 = "Заявки клиентов"
@@ -30,6 +30,7 @@ func CheckForAdmin(ID int64) bool {
 	}
 	return ok
 }
+
 func HandleAdminMessage(message *tgbotapi.Message) {
 	if message.IsCommand() {
 		handleAdminCommand(message)
