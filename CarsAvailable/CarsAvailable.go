@@ -12,24 +12,6 @@ var (
 	bot, _ = tgbotapi.NewBotAPI(api.GetApiToken())
 )
 
-//type Car struct {
-//	Id           int
-//	Brand        string
-//	Model        string
-//	Country      string
-//	Year         int
-//	Status       string
-//	Enginetype   string
-//	Enginevolume float64
-//	Transmission string
-//	DriveType    string
-//	Color        string
-//	Mileage      float64
-//	Price        string
-//	Other        string
-//	IsCompleted  bool
-//}
-
 func ShowCarsList(message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
 	msg.Text = "Доступные машины:\n "
 	carlist, err := handleDatabase.ReadAll()
@@ -50,11 +32,18 @@ func ShowCarsList(message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
 
 func NewCar(message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
 	msg.Text = "Добавление новой машины"
+	var car handleDatabase.Car
 
 	if _, err := bot.Send(msg); err != nil {
 		log.Printf("Не удалось ответить на сообщение")
 		panic(err)
 	}
+
+	id, err := handleDatabase.AddNewCar(car)
+	if err != nil {
+		log.Printf("не удалось добавить новую машину")
+	}
+	fmt.Print(id)
 }
 
 func CorrectCar(message *tgbotapi.Message, msg tgbotapi.MessageConfig) {

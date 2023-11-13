@@ -12,7 +12,7 @@ var (
 	bot, _    = tgbotapi.NewBotAPI(api.GetApiToken())
 	adminList = []int64{
 		362859506, //лиза
-		//231043417, //я
+		231043417, //я
 		//314539937, //дима
 	}
 	btn1 = "Список машин"
@@ -46,6 +46,9 @@ func HandleAdminMessage(message *tgbotapi.Message) {
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 		ClientOrders.OrdersList(message, msg)
 
+		//goland:noinspection ALL
+		//goland:noinspection GoUnusedCallResult
+		//goland:noinspection ALL
 	case btn3:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 		CarsAvailable.NewCar(message, msg)
