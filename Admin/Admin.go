@@ -1,6 +1,7 @@
 package Admin
 
 import (
+	"cars_telegram_bot/AddEditDeleteCarDB"
 	"cars_telegram_bot/CarsAvailable"
 	"cars_telegram_bot/ClientOrders"
 	api "cars_telegram_bot/handleAPI"
@@ -40,22 +41,19 @@ func HandleAdminMessage(message *tgbotapi.Message) {
 	switch message.Text {
 	case btn1:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
-		CarsAvailable.ShowCarsList(message, msg)
+		CarsAvailable.ShowCarsList(msg)
 
 	case btn2:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 		ClientOrders.OrdersList(message, msg)
 
-		//goland:noinspection ALL
-		//goland:noinspection GoUnusedCallResult
-		//goland:noinspection ALL
 	case btn3:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
-		CarsAvailable.NewCar(message, msg)
+		AddEditDeleteCarDB.NewCar(msg)
 
 	case btn4:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
-		CarsAvailable.CorrectCar(message, msg)
+		AddEditDeleteCarDB.CorrectCar(msg)
 
 	default:
 		msg.Text = "дефолтное сообщение"

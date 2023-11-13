@@ -26,7 +26,7 @@ func HandleMessage(message *tgbotapi.Message) {
 	switch message.Text {
 	case btn1:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
-		CarsAvailable.ShowCarsList(message, msg) //передаем туда msg чтобы удалить клавиатуру
+		CarsAvailable.ShowCarsList(msg) //передаем туда msg чтобы удалить клавиатуру
 
 	case btn2:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
