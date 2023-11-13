@@ -49,7 +49,7 @@ func HandleAdminMessage(message *tgbotapi.Message) {
 
 	case btn3:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
-		AddEditDeleteCarDB.NewCar(msg)
+		AddEditDeleteCarDB.NewCar(message.From.ID, msg)
 
 	case btn4:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
