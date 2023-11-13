@@ -66,6 +66,18 @@ func handleCommand(command *tgbotapi.Message) {
 				tgbotapi.NewKeyboardButton(btn4),
 			),
 		)
+	case "menu":
+		msg.Text = "Используйте встроенную клавиатуру телеграмма"
+		msg.ReplyMarkup = tgbotapi.NewReplyKeyboard(
+			tgbotapi.NewKeyboardButtonRow(
+				tgbotapi.NewKeyboardButton(btn1),
+				tgbotapi.NewKeyboardButton(btn2),
+			),
+			tgbotapi.NewKeyboardButtonRow(
+				tgbotapi.NewKeyboardButton(btn3),
+				tgbotapi.NewKeyboardButton(btn4),
+			),
+		)
 
 	case "help":
 		msg.Text = "Список доступных команд: \n" +

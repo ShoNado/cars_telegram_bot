@@ -3,6 +3,7 @@ package CarsAvailable
 import (
 	api "cars_telegram_bot/handleAPI"
 	"cars_telegram_bot/handleDatabase"
+	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
 )
@@ -11,14 +12,40 @@ var (
 	bot, _ = tgbotapi.NewBotAPI(api.GetApiToken())
 )
 
+//type Car struct {
+//	Id           int
+//	Brand        string
+//	Model        string
+//	Country      string
+//	Year         int
+//	Status       string
+//	Enginetype   string
+//	Enginevolume float64
+//	Transmission string
+//	DriveType    string
+//	Color        string
+//	Mileage      float64
+//	Price        string
+//	Other        string
+//	IsCompleted  bool
+//}
+
 func ShowCarsList(message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
-	msg.Text = "Список машин"
+	msg.Text = "Доступные машины:\n "
+	carlist, err := handleDatabase.ReadAll()
+	if err != nil {
+		log.Printf("getting car list: %v", err)
+	}
+
+	for _, car := range carlist {
+		msg.Text += fmt.Sprintf("%v. %v %v %v \n Двигатель: %v %v \n Цвет: %v \n Цена: %v \n Чтобы посмотреть подробнее нажмите /car_"+"%v \n\n",
+			car.Id, car.Brand, car.Brand, car.Year, car.Enginevolume, car.Enginetype, car.Color, car.Price, car.Id)
+	}
 
 	if _, err := bot.Send(msg); err != nil {
 		log.Printf("Не удалось ответить на сообщение")
 		panic(err)
 	}
-	carsAvailable()
 }
 
 func NewCar(message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
@@ -30,10 +57,6 @@ func NewCar(message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
 	}
 }
 
-func carsAvailable() {
-	handleDatabase.ConnectDB()
-}
-
 func CorrectCar(message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
 	msg.Text = "Редактирование старой машины"
 
@@ -41,20 +64,4 @@ func CorrectCar(message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
 		log.Printf("Не удалось ответить на сообщение")
 		panic(err)
 	}
-}
-
-type Car struct {
-	Brand        string
-	Model        string
-	Country      string
-	Year         int
-	Status       string
-	Enginetype   string
-	Enginevolume float64
-	Transmission string
-	DriveType    string
-	Color        string
-	Mileage      float64
-	//FavoriteNum  int
-	Other string
 }

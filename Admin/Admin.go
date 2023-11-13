@@ -13,7 +13,7 @@ var (
 	adminList = []int64{
 		362859506, //лиза
 		//231043417, //я
-		314539937, //дима
+		//314539937, //дима
 	}
 	btn1 = "Список машин"
 	btn2 = "Заявки клиентов"
@@ -80,7 +80,19 @@ func handleAdminCommand(command *tgbotapi.Message) {
 				tgbotapi.NewKeyboardButton(btn4),
 			),
 		)
+	case "menu":
+		msg.Text = "Используйте встроенную клавиатуру телеграмма"
 
+		msg.ReplyMarkup = tgbotapi.NewReplyKeyboard(
+			tgbotapi.NewKeyboardButtonRow(
+				tgbotapi.NewKeyboardButton(btn1),
+				tgbotapi.NewKeyboardButton(btn2),
+			),
+			tgbotapi.NewKeyboardButtonRow(
+				tgbotapi.NewKeyboardButton(btn3),
+				tgbotapi.NewKeyboardButton(btn4),
+			),
+		)
 	case "help":
 		msg.Text = "Список команд: \n" +
 			"/start \n" +
