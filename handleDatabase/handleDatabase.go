@@ -53,7 +53,16 @@ func ConnectDB() {
 func readAll() []Car {
 	//var crs Car
 
-	num, _ := db.Query("SELECT COUNT(*) FROM cars")
-	fmt.Println(num)
+	carlist, _ := db.Query("SELECT COUNT(*) FROM cars")
+	defer num.Close()
+	var count int
+	for num.Next() {
+
+		if err := num.Scan(&count); err != nil {
+			return nil
+		}
+
+	}
+	fmt.Println(count)
 	return nil
 }

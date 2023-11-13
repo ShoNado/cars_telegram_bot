@@ -44,17 +44,17 @@ func CorrectCar(message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
 }
 
 type Car struct {
-	Brand        string  `json:"brand,omitempty" :"brand"`
-	Model        string  `json:"model,omitempty" :"model"`
-	Country      string  `json:"country,omitempty" :"country"`
-	Year         int     `json:"year,omitempty" :"year"`
-	Status       string  `json:"status,omitempty" :"status"`
-	Enginetype   string  `json:"enginetype,omitempty" :"enginetype"`
-	Enginevolume float64 `json:"enginevolume,omitempty" :"enginevolume"`
-	Transmission string  `json:"transmission,omitempty" :"transmission"`
-	DriveType    string  `json:"drive_type,omitempty" :"drive_type"`
-	Color        string  `json:"color,omitempty" :"color"`
-	Mileage      float64 `json:"mileage,omitempty" :"mileage"`
-	//FavoriteNum  int     `json:"favoritenum,omitempty" :"favorite_num"`
-	Other string `json:"other,omitempty" :"other"`
+	Brand        string
+	Model        string
+	Country      string
+	Year         int
+	Status       string
+	Enginetype   string
+	Enginevolume float64
+	Transmission string
+	DriveType    string
+	Color        string
+	Mileage      float64
+	//FavoriteNum  int
+	Other string
 }
