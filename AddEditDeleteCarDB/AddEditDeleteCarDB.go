@@ -9,27 +9,27 @@ import (
 )
 
 var (
-	bot, _            = tgbotapi.NewBotAPI(api.GetApiToken())
-	AddCar      bool  = false //индикатор перехода в состояние добавления машины
-	IDglobal    int64         //запоминаем айди пользователя который хочет добавить машину
-	UpdateLocal string
-	UpdateHere  int = 1 //счетчик по обновлениям машины
+	bot, _          = tgbotapi.NewBotAPI(api.GetApiToken())
+	AddCar     bool = false //индикатор перехода в состояние добавления машины
+	UpdateHere int          //счетчик по обновлениям машины
 )
 
-func GetUpdates(text string) {
+func GetUpdates(text string, msg tgbotapi.MessageConfig) {
 	var car handleDatabase.Car
-	msg := tgbotapi.NewMessage(IDglobal, "")
 	switch UpdateHere {
 	case 1:
-		msg.Text = "Добавление новой машины\n Укажите бренд:"
-		bot.Send(msg)
-		car.Brand = UpdateLocal
+		car.Brand = text
+		if car.Brand != "" {
+			UpdateHere += 1
+			msg.Text = fmt.Sprintf("Вы указали бренд: %v\n Укажите модель:", car.Brand)
+			bot.Send(msg)
+		}
 
 	case 2:
-		msg.Text = fmt.Sprintf("Вы указали бренд %v:\n Укажите модель:", UpdateLocal)
-		bot.Send(msg)
-		car.Model = UpdateLocal
-
+		car.Model = text
+		if car.Model != "" {
+			UpdateHere += 1
+		}
 	case 10:
 		msg.Text = "машина успешно добавлена"
 		bot.Send(msg)
@@ -44,10 +44,11 @@ func GetUpdates(text string) {
 	}
 }
 
-func NewCar(id int64, msg tgbotapi.MessageConfig) {
+func NewCar(msg tgbotapi.MessageConfig) {
 	AddCar = true //переходим в режим добавления машины
-	IDglobal = id
-
+	UpdateHere = 1
+	msg.Text = fmt.Sprintf("Добавление новой машины\n Укажите бренд:")
+	bot.Send(msg)
 }
 
 func CorrectCar(msg tgbotapi.MessageConfig) {

@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	add "cars_telegram_bot/AddEditDeleteCarDB"
 	"cars_telegram_bot/Admin"
 	api "cars_telegram_bot/handleAPI"
 	"cars_telegram_bot/user"
@@ -55,33 +54,26 @@ func receiveUpdates(ctx context.Context, updates tgbotapi.UpdatesChannel) {
 }
 
 func handleUpdate(update tgbotapi.Update) {
-	if add.AddCar == false || add.IDglobal != update.Message.From.ID {
-		adminStatus := Admin.CheckForAdmin(update.SentFrom().ID)
-		switch {
-		// Handle messages
-		case update.Message != nil && adminStatus:
-			Admin.HandleAdminMessage(update.Message)
-			break
 
-		case update.Message != nil && !adminStatus:
-			user.HandleMessage(update.Message)
-			break
+	adminStatus := Admin.CheckForAdmin(update.SentFrom().ID)
+	switch {
+	// Handle messages
+	case update.Message != nil && adminStatus:
+		Admin.HandleAdminMessage(update.Message)
+		break
 
-		// Handle button clicks
-		case update.CallbackQuery != nil && adminStatus:
-			Admin.HandleAdminQuery(update.CallbackQuery)
-			break
+	case update.Message != nil && !adminStatus:
+		user.HandleMessage(update.Message)
+		break
 
-		case update.CallbackQuery != nil && !adminStatus:
-			user.HandleButton(update.CallbackQuery)
-			break
-		}
+	// Handle button clicks
+	case update.CallbackQuery != nil && adminStatus:
+		Admin.HandleAdminQuery(update.CallbackQuery)
+		break
+
+	case update.CallbackQuery != nil && !adminStatus:
+		user.HandleButton(update.CallbackQuery)
+		break
 	}
 
-	if add.AddCar == true && update.Message.From.ID == add.IDglobal { //если в режиме добавления машины
-		if update.Message.Text != "" {
-			add.GetUpdates(update.Message.Text)
-			add.UpdateHere += 1
-		}
-	}
 }

@@ -2,9 +2,11 @@ package Admin
 
 import (
 	"cars_telegram_bot/AddEditDeleteCarDB"
+	add "cars_telegram_bot/AddEditDeleteCarDB"
 	"cars_telegram_bot/CarsAvailable"
 	"cars_telegram_bot/ClientOrders"
 	api "cars_telegram_bot/handleAPI"
+	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
 )
@@ -49,18 +51,23 @@ func HandleAdminMessage(message *tgbotapi.Message) {
 
 	case btn3:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
-		AddEditDeleteCarDB.NewCar(message.From.ID, msg)
+		AddEditDeleteCarDB.NewCar(msg)
 
 	case btn4:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 		AddEditDeleteCarDB.CorrectCar(msg)
 
 	default:
-		msg.Text = "дефолтное сообщение"
-		if _, err := bot.Send(msg); err != nil {
-			log.Printf("Не удалось ответить на сообщение админа")
-			panic(err) // not correct way handle error, remake!
+		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
+		if add.AddCar == true {
+			fmt.Println(1)
+			add.GetUpdates(message.Text, msg)
+		} else {
+			fmt.Println(2)
+			msg.Text = "Используйте команды"
+			bot.Send(msg)
 		}
+
 	}
 
 }
