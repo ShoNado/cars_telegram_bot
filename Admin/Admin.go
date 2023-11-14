@@ -18,10 +18,10 @@ var (
 		231043417, //я
 		//314539937, //дима
 	}
-	btn1 = "Список машин"
-	btn2 = "Заявки клиентов"
+	btn1 = "Машины в наличии"
+	btn2 = "Машины в пути"
 	btn3 = "Добавить машину"
-	btn4 = "Редактировать машину"
+	btn4 = "Заявки клиентов"
 )
 
 func CheckForAdmin(ID int64) bool {
@@ -47,7 +47,7 @@ func HandleAdminMessage(message *tgbotapi.Message) {
 
 	case btn2:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
-		ClientOrders.OrdersList(message, msg)
+		CarsAvailable.ShowCarsListOnWay(msg)
 
 	case btn3:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
@@ -55,7 +55,7 @@ func HandleAdminMessage(message *tgbotapi.Message) {
 
 	case btn4:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
-		AddEditDeleteCarDB.CorrectCar(msg)
+		ClientOrders.OrdersList(message, msg)
 
 	default:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)

@@ -40,7 +40,7 @@ func connectDB() {
 		User:   os.Getenv("root@localhost"),
 		Passwd: os.Getenv(getPass()),
 		Net:    "tcp",
-		Addr:   "127.0.0.1:3306",
+		Addr:   getAdr(),
 		DBName: "cars",
 	}
 	// Get a database handle.
@@ -58,6 +58,17 @@ func connectDB() {
 
 func getPass() string { //read password from file
 	file, _ := os.Open("configDB.json")
+	decoder := json.NewDecoder(file)
+	configuration := Pass{}
+	err := decoder.Decode(&configuration)
+	if err != nil {
+		log.Panic(err)
+	}
+	return configuration.Password
+}
+
+func getAdr() string { //read Ip from file
+	file, _ := os.Open("configIP.json")
 	decoder := json.NewDecoder(file)
 	configuration := Pass{}
 	err := decoder.Decode(&configuration)
