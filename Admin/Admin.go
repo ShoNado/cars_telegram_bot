@@ -101,10 +101,15 @@ func handleAdminCommand(command *tgbotapi.Message) {
 				tgbotapi.NewKeyboardButton(btn4),
 			),
 		)
+
+	case "stop":
+		add.AddCar = false
+		msg.Text = fmt.Sprintf("Прерывано добавление машины\n /menu")
 	case "help":
 		msg.Text = "Список команд: \n" +
 			"/start \n" +
-			"/help \n"
+			"/help \n" +
+			"/stop"
 
 	default:
 		msg.Text = "Нет такой команды"

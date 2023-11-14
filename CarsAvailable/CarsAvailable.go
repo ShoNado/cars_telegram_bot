@@ -30,22 +30,6 @@ func ShowCarsList(msg tgbotapi.MessageConfig) {
 	}
 }
 
-func NewCar(message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
-	var car handleDatabase.Car
-	msg.Text = "Добавление новой машины\n Укажите бренд:"
-
-	if _, err := bot.Send(msg); err != nil {
-		log.Printf("Не удалось ответить на сообщение")
-		panic(err)
-	}
-
-	id, err := handleDatabase.AddNewCar(car)
-	if err != nil {
-		log.Printf("не удалось добавить новую машину")
-	}
-	fmt.Print(id)
-}
-
 func CorrectCar(message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
 	msg.Text = "Редактирование старой машины"
 
