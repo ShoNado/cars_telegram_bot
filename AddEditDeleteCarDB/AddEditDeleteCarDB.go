@@ -10,42 +10,43 @@ import (
 )
 
 var (
-	bot, _          = tgbotapi.NewBotAPI(api.GetApiToken())
-	AddCar     bool = false //индикатор перехода в состояние добавления машины
-	UpdateHere int          //счетчик по обновлениям машины
+	bot, _     = tgbotapi.NewBotAPI(api.GetApiToken())
+	AddCar     = false //индикатор перехода в состояние добавления машины
+	UpdateHere int     //счетчик по обновлениям машины
 )
+var newcar handleDatabase.Car
 
 func GetUpdates(text string, msg tgbotapi.MessageConfig) {
-	var car handleDatabase.Car
+
 	switch UpdateHere {
 	case 1:
-		car.Brand = text
-		if car.Brand != "" {
+		newcar.Brand = text
+		if newcar.Brand != "" {
 			UpdateHere += 1
-			msg.Text = fmt.Sprintf("Вы указали бренд: %v\n Укажите модель:", car.Brand)
+			msg.Text = fmt.Sprintf("Вы указали бренд: %v\n Укажите модель:", newcar.Brand)
 			bot.Send(msg)
 		}
 	case 2:
-		car.Model = text
-		if car.Model != "" {
+		newcar.Model = text
+		if newcar.Model != "" {
 			UpdateHere += 1
-			msg.Text = fmt.Sprintf("Вы указали модель: %v\n Укажите страну производитель:", car.Model)
+			msg.Text = fmt.Sprintf("Вы указали модель: %v\n Укажите страну производитель:", newcar.Model)
 			bot.Send(msg)
 		}
 	case 3:
-		car.Country = text
-		if car.Country != "" {
+		newcar.Country = text
+		if newcar.Country != "" {
 			UpdateHere += 1
-			msg.Text = fmt.Sprintf("Вы указали страну производитель: %v\n Укажите год производства/постановки на первый учет:", car.Country)
+			msg.Text = fmt.Sprintf("Вы указали страну производитель: %v\n Укажите год производства/постановки на первый учет:", newcar.Country)
 			bot.Send(msg)
 		}
 	case 4:
 		var err error
-		car.Year, err = strconv.Atoi(text)
+		newcar.Year, err = strconv.Atoi(text)
 		if err == nil {
-			if car.Year != 0 {
+			if newcar.Year != 0 {
 				UpdateHere += 1
-				msg.Text = fmt.Sprintf("Вы указали год производства/постановки на первый учет: %v\n Укажите статус(доступна/впути/под заказ и тд):", car.Year)
+				msg.Text = fmt.Sprintf("Вы указали год производства/постановки на первый учет: %v\n Укажите статус(доступна/впути/под заказ и тд):", newcar.Year)
 				msg.ReplyMarkup = tgbotapi.NewReplyKeyboard(
 					tgbotapi.NewKeyboardButtonRow(
 						tgbotapi.NewKeyboardButton("В пути"),
@@ -55,79 +56,125 @@ func GetUpdates(text string, msg tgbotapi.MessageConfig) {
 			}
 		}
 	case 5:
-		car.Status = text
-		if car.Status == "В наличии" {
-			car.StatusBool = true
-		} else if car.Status == "В пути" {
-			car.StatusBool = false
+		newcar.Status = text
+		if newcar.Status == "В наличии" {
+			newcar.StatusBool = true
+		} else if newcar.Status == "В пути" {
+			newcar.StatusBool = false
 		}
-		if car.Status == "В наличии" || car.Status == "В пути" {
+		if newcar.Status == "В наличии" || newcar.Status == "В пути" {
 			UpdateHere += 1
-			msg.Text = fmt.Sprintf("Вы указали статус: %v\n Укажите вид двигателя (дизельб/бензин/гибрид/электричка), не объем!:", car.Status)
+			msg.Text = fmt.Sprintf("Вы указали статус: %v\n Укажите вид двигателя (дизельб/бензин/гибрид/электричка), не объем!:", newcar.Status)
 			msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 			bot.Send(msg)
 		}
 	case 6:
-		car.Enginetype = text
-		if car.Enginetype != "" {
+		newcar.Enginetype = text
+		if newcar.Enginetype != "" {
 			UpdateHere += 1
-			msg.Text = fmt.Sprintf("Вы указали вид двигателя: %v\n Укажите объем двигателя:", car.Enginetype)
+			msg.Text = fmt.Sprintf("Вы указали вид двигателя: %v\n Укажите объем двигателя (для электрических машин следует указать 0):", newcar.Enginetype)
 			bot.Send(msg)
 		}
 	case 7:
-		car.Enginevolume = text
-		if car.Enginevolume != "" {
+		newcar.Enginevolume = text
+		if newcar.Enginevolume != "" {
 			UpdateHere += 1
-			msg.Text = fmt.Sprintf("Вы указали объем двигателя: %v\n Укажите  мощность (в л.с.):", car.Enginevolume)
+			msg.Text = fmt.Sprintf("Вы указали объем двигателя: %v\n Укажите  мощность (в л.с.):", newcar.Enginevolume)
 			bot.Send(msg)
 		}
 	case 8:
-		car.Horsepower = text
-		if car.Horsepower != "" {
+		newcar.Horsepower = text
+		if newcar.Horsepower != "" {
 			UpdateHere += 1
-			msg.Text = fmt.Sprintf("Вы указали мощность: %v\n Укажите  крутящий момент (в н.м.):", car.Horsepower)
+			msg.Text = fmt.Sprintf("Вы указали мощность: %v\n Укажите  крутящий момент (в н.м.):", newcar.Horsepower)
 			bot.Send(msg)
 		}
 	case 9:
-		car.Torque = text
-		if car.Torque != "" {
+		newcar.Torque = text
+		if newcar.Torque != "" {
 			UpdateHere += 1
-			msg.Text = fmt.Sprintf("Вы указали крутящий момент: %v\n Укажите вид трансмиссии (механика/автома/робот/вариатор):", car.Torque)
+			msg.Text = fmt.Sprintf("Вы указали крутящий момент: %v\n Укажите вид трансмиссии (механика/автома/робот/вариатор):", newcar.Torque)
 			bot.Send(msg)
 		}
 	case 10:
-		car.Transmission = text
-		if car.Transmission != "" {
+		newcar.Transmission = text
+		if newcar.Transmission != "" {
 			UpdateHere += 1
-			msg.Text = fmt.Sprintf("Вы указали вид трансмисии: %v\n Укажите вид привода (полный/задний/передний/parttime):", car.Transmission)
+			msg.Text = fmt.Sprintf("Вы указали вид трансмисии: %v\n Укажите вид привода (полный/задний/передний/parttime):", newcar.Transmission)
 			bot.Send(msg)
 		}
 	case 11:
-		car.DriveType = text
-		if car.DriveType != "" {
+		newcar.DriveType = text
+		if newcar.DriveType != "" {
 			UpdateHere += 1
-			msg.Text = fmt.Sprintf("Вы указали вид привода: %v\n Укажите  цвет:", car.DriveType)
+			msg.Text = fmt.Sprintf("Вы указали вид привода: %v\n Укажите  цвет:", newcar.DriveType)
 			bot.Send(msg)
 		}
-
 	case 12:
-		car.Color = text
-		if car.Color != "" {
+		newcar.Color = text
+		if newcar.Color != "" {
 			UpdateHere += 1
-			msg.Text = fmt.Sprintf("Вы указали объем цвет: %v\n Укажите  пробеш (в км):", car.Color)
+			msg.Text = fmt.Sprintf("Вы указали объем цвет: %v\n Укажите  пробег (в км):", newcar.Color)
 			bot.Send(msg)
 		}
-
-	case 25:
-		msg.Text = "машина успешно добавлена"
-		bot.Send(msg)
-		AddCar = false
-	}
-
-	if car.IsCompleted == true {
-		_, err := handleDatabase.AddNewCar(car)
-		if err != nil {
-			log.Printf("не удалось добавить новую машину")
+	case 13:
+		newcar.Mileage = text
+		if newcar.Mileage != "" {
+			UpdateHere += 1
+			msg.Text = fmt.Sprintf("Вы указали пробег: %v\n Укажите цену(либо напишите \"по запросу\"):", newcar.Mileage)
+			bot.Send(msg)
+		}
+	case 14:
+		newcar.Price = text
+		if newcar.Price != "" {
+			UpdateHere += 1
+			msg.Text = fmt.Sprintf("Вы указали цену: %v\n Укажите примечание (если примечаний нет напишите \"нет\"):", newcar.Price)
+			bot.Send(msg)
+		}
+	case 15:
+		newcar.Other = text
+		if newcar.Other != "" {
+			if newcar.Other == "нет" {
+				newcar.Other = ""
+				msg.Text = fmt.Sprintf("Примечаний нет \n\n")
+			} else {
+				msg.Text = fmt.Sprintf("Вы указали примечание: %v\n\n ", newcar.Other)
+			}
+			UpdateHere += 1
+			msg.Text += fmt.Sprintf("Подтвердите верность введеных данных\n Бренд: %v\n Модель: %v\n Страна производитель: %v\n "+
+				"Год производства: %v\n Статус доставки: %v\n Тип двигателя: %v\n Объем двигателя: %v\n Мощность: %v\n Крутящий момент: %v\n"+
+				"Коробка передач: %v\n Привод: %v\n Цвет: %v\n Пробег: %v\n Цена: %v\n Примечания: %v\n\n Все верно?", newcar.Brand, newcar.Model, newcar.Country,
+				newcar.Year, newcar.Status, newcar.Enginetype, newcar.Enginevolume, newcar.Horsepower, newcar.Torque, newcar.Transmission, newcar.DriveType, newcar.Color,
+				newcar.Mileage, newcar.Price, newcar.Other)
+			msg.ReplyMarkup = tgbotapi.NewReplyKeyboard(
+				tgbotapi.NewKeyboardButtonRow(
+					tgbotapi.NewKeyboardButton("Да"),
+					tgbotapi.NewKeyboardButton("Нет"),
+				))
+			bot.Send(msg)
+		}
+	case 16:
+		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
+		if text == "Да" {
+			newcar.IsCompleted = true
+			id, err := handleDatabase.AddNewCar(newcar)
+			if err != nil {
+				msg.Text = fmt.Sprintf("Произошла ошибка при добавлении машины %v", id)
+			} else {
+				msg.Text = fmt.Sprintf("Машина успешно добавлена:\n /car_%v\n /menu", id)
+			}
+			bot.Send(msg)
+			AddCar = false //выходим из режима добавления машины
+		} else if text == "Нет" {
+			newcar.IsCompleted = false
+			id, err := handleDatabase.AddNewCar(newcar)
+			if err != nil {
+				msg.Text = fmt.Sprintf("Произошла ошибка при добавлении машины, в которой что-то не так")
+			} else {
+				msg.Text = fmt.Sprintf("Машина сохранена, неверные параметры можно скорректировать далее:\n /car_%v\n /menu", id)
+			}
+			bot.Send(msg)
+			AddCar = false //выходим из режима добавления машины
 		}
 	}
 }
@@ -135,11 +182,12 @@ func GetUpdates(text string, msg tgbotapi.MessageConfig) {
 func NewCar(msg tgbotapi.MessageConfig) {
 	AddCar = true //переходим в режим добавления машины
 	UpdateHere = 1
-	msg.Text = fmt.Sprintf("Добавление новой машины\n Если хотите прервать добавление машины нажмите /stop \n Укажите бренд:")
+	msg.Text = fmt.Sprintf("Добавление новой машины\n Если хотите прервать добавление машины нажмите /stop " +
+		"(переход в меню также прервет добавление машины) \n Укажите бренд:")
 	bot.Send(msg)
 }
 
-func CorrectCar(msg tgbotapi.MessageConfig) {
+func CorrectCar(msg tgbotapi.MessageConfig) { //todo
 	msg.Text = "Редактирование старой машины"
 
 	if _, err := bot.Send(msg); err != nil {

@@ -4,7 +4,7 @@ CREATE TABLE cars (
                         brand        VARCHAR(255) NOT NULL,
                         model        VARCHAR(255) NOT NULL,
                         country      VARCHAR(255),
-                        year         SMALLINT,
+                        year         INT,
                         status       VARCHAR(255),
                         statusBool   BOOLEAN, #true if available false if on the way
                         enginetype   VARCHAR(255),
