@@ -40,17 +40,31 @@ func GetUpdates(text string, msg tgbotapi.MessageConfig) {
 			bot.Send(msg)
 		}
 	case 4:
-		car.Year, _ = strconv.Atoi(text)
-		if car.Year != 0 {
-			UpdateHere += 1
-			msg.Text = fmt.Sprintf("Вы указали год производства/постановки на первый учет: %v\n Укажите статус(доступна/впути/под заказ и тд):", car.Year)
-			bot.Send(msg)
+		var err error
+		car.Year, err = strconv.Atoi(text)
+		if err == nil {
+			if car.Year != 0 {
+				UpdateHere += 1
+				msg.Text = fmt.Sprintf("Вы указали год производства/постановки на первый учет: %v\n Укажите статус(доступна/впути/под заказ и тд):", car.Year)
+				msg.ReplyMarkup = tgbotapi.NewReplyKeyboard(
+					tgbotapi.NewKeyboardButtonRow(
+						tgbotapi.NewKeyboardButton("В пути"),
+						tgbotapi.NewKeyboardButton("В наличии"),
+					))
+				bot.Send(msg)
+			}
 		}
 	case 5:
 		car.Status = text
-		if car.Status != "" {
+		if car.Status == "В наличии" {
+			car.StatusBool = true
+		} else if car.Status == "В пути" {
+			car.StatusBool = false
+		}
+		if car.Status == "В наличии" || car.Status == "В пути" {
 			UpdateHere += 1
 			msg.Text = fmt.Sprintf("Вы указали статус: %v\n Укажите вид двигателя (дизельб/бензин/гибрид/электричка), не объем!:", car.Status)
+			msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 			bot.Send(msg)
 		}
 	case 6:

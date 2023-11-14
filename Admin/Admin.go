@@ -43,7 +43,7 @@ func HandleAdminMessage(message *tgbotapi.Message) {
 	switch message.Text {
 	case btn1:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
-		CarsAvailable.ShowCarsList(msg)
+		CarsAvailable.ShowCarsListAvailable(msg)
 
 	case btn2:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
@@ -60,11 +60,9 @@ func HandleAdminMessage(message *tgbotapi.Message) {
 	default:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 		if add.AddCar == true {
-			fmt.Println(1)
 			add.GetUpdates(message.Text, msg)
 		} else {
-			fmt.Println(2)
-			msg.Text = "Используйте команды"
+			msg.Text = "Используйте /menu"
 			bot.Send(msg)
 		}
 

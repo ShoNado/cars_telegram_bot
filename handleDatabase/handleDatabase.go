@@ -21,6 +21,7 @@ type Car struct {
 	Country      string
 	Year         int
 	Status       string
+	StatusBool   bool
 	Enginetype   string
 	Enginevolume string
 	Horsepower   string
@@ -84,7 +85,7 @@ func ReadAll() ([]Car, error) {
 	for carlistDB.Next() {
 		var car Car
 		if err := carlistDB.Scan(&car.Id, &car.Brand, &car.Model, &car.Country,
-			&car.Year, &car.Status, &car.Enginetype, &car.Enginevolume, &car.Horsepower,
+			&car.Year, &car.Status, &car.StatusBool, &car.Enginetype, &car.Enginevolume, &car.Horsepower,
 			&car.Torque, &car.Transmission, &car.DriveType, &car.Color, &car.Mileage,
 			&car.Price, &car.Other, &car.IsCompleted); err != nil {
 			return nil, fmt.Errorf("getting car list: %v", err)
@@ -95,8 +96,8 @@ func ReadAll() ([]Car, error) {
 }
 
 func AddNewCar(car Car) (int, error) {
-	result, err := db.Exec("INSERT INTO cars (brand, model, country, year, status, enginetype, enginevolume, transmission, horsepower, torque ,drivetype, color, milage, other, IsCompleted) VALUES (?,?,?,?,?,?,?,?,?,?,?, ?, ?)",
-		car.Brand, car.Model, car.Country, car.Year, car.Status, car.Enginetype, car.Enginevolume, car.Horsepower, car.Torque, car.Transmission, car.DriveType, car.Color, car.Mileage, car.Price, car.Other, car.IsCompleted)
+	result, err := db.Exec("INSERT INTO cars (brand, model, country, year, status, statusBool, enginetype, enginevolume, transmission, horsepower, torque ,drivetype, color, milage, other, IsCompleted) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?, ?, ?)",
+		car.Brand, car.Model, car.Country, car.Year, car.Status, car.StatusBool, car.Enginetype, car.Enginevolume, car.Horsepower, car.Torque, car.Transmission, car.DriveType, car.Color, car.Mileage, car.Price, car.Other, car.IsCompleted)
 	if err != nil {
 		return 0, fmt.Errorf("addAlbum: %v", err)
 	}

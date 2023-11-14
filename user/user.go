@@ -11,7 +11,7 @@ import (
 var (
 	bot, _ = tgbotapi.NewBotAPI(api.GetApiToken())
 	btn1   = "Машины в наличии" //Машины в наличии
-	btn2   = "Мои заказы"       //Мои заказы
+	btn2   = "Машины в пути"    //Мои заказы
 	btn3   = "Избранное"        //Избранное
 	btn4   = "Заказать машину"  //Заказать машину
 )
@@ -26,11 +26,11 @@ func HandleMessage(message *tgbotapi.Message) {
 	switch message.Text {
 	case btn1:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
-		CarsAvailable.ShowCarsList(msg) //передаем туда msg чтобы удалить клавиатуру
+		CarsAvailable.ShowCarsListAvailable(msg) //передаем туда msg чтобы удалить клавиатуру
 
 	case btn2:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
-		ClientOrders.ClientOrders(message, msg)
+		CarsAvailable.ShowCarsListOnWay(msg)
 
 	case btn3:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
