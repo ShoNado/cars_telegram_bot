@@ -1,12 +1,12 @@
 package Admin
 
 import (
-	"cars_telegram_bot/AddEditDeleteCarDB"
 	add "cars_telegram_bot/AddEditDeleteCarDB"
 	"cars_telegram_bot/CarsAvailable"
 	"cars_telegram_bot/ClientOrders"
 	api "cars_telegram_bot/handleAPI"
 	"cars_telegram_bot/handleDatabase"
+	"cars_telegram_bot/usersDB"
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
@@ -54,7 +54,7 @@ func HandleAdminMessage(message *tgbotapi.Message) {
 
 	case message.Text == btn3:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
-		AddEditDeleteCarDB.NewCar(msg)
+		add.NewCar(msg)
 
 	case message.Text == btn4:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
@@ -66,12 +66,32 @@ func HandleAdminMessage(message *tgbotapi.Message) {
 			msg.Text = "Что-то не так с айди"
 			break
 		}
-		msg.Text = fmt.Sprintf("Вы удалили машину №%v", id)
+		err = handleDatabase.DeleteCar(id)
+		if err != nil {
+			msg.Text = "Что-то не так с удалением"
+		} else {
+			msg.Text = fmt.Sprintf("Вы удалили машину №%v\n/menu", id)
+		}
 		bot.Send(msg)
 	case message.Text == "Отмена":
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 		msg.Text = "Удаление отменено"
 		bot.Send(msg)
+	case strings.HasPrefix(message.Text, "Подтвердить принятие заказа "):
+		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
+		id, _ := strconv.Atoi(message.Text[53:])
+		ClientOrders.WarnClient(id)
+		msg.Text = "Заказ успешно подтвержден"
+		bot.Send(msg)
+	case strings.HasPrefix(message.Text, "Посмотреть подробнее о заявке номер "):
+		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
+		id, _ := strconv.Atoi(message.Text[56:])
+		ClientOrders.WarnClient(id)
+		profile := usersDB.ShowOrder(id)
+		fmt.Println(profile)
+		msg.Text = "все гуд"
+		bot.Send(msg)
+
 	default:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 		if add.AddCar == true {

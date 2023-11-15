@@ -1,6 +1,7 @@
 package user
 
 import (
+	"cars_telegram_bot/AddClientInDB"
 	"cars_telegram_bot/CarsAvailable"
 	"cars_telegram_bot/ClientOrders"
 	api "cars_telegram_bot/handleAPI"
@@ -28,29 +29,35 @@ func HandleMessage(message *tgbotapi.Message) {
 	}
 	msg := tgbotapi.NewMessage(message.From.ID, "")
 
-	switch message.Text {
-	case btn1:
+	switch {
+	case message.Text == btn1:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 		CarsAvailable.ShowCarsListAvailable(msg) //передаем туда msg чтобы удалить клавиатуру
 
-	case btn2:
+	case message.Text == btn2:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 		CarsAvailable.ShowCarsListOnWay(msg)
 
-	case btn3:
+	case message.Text == btn3:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 		ClientOrders.ClientFavorites(message, msg)
 
-	case btn4:
+	case message.Text == btn4:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
-		ClientOrders.NewOrder(message, msg)
+		AddClientInDB.NewOrder(message, msg)
 
 	default:
-		msg.Text = "дефолтное сообщение"
-		if _, err := bot.Send(msg); err != nil {
-			log.Printf("Не удалось ответить на сообщение")
-			panic(err)
+		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
+		if AddClientInDB.AddOrder == true {
+			AddClientInDB.OrderUpdate(message, msg)
+		} else {
+			msg.Text = "Используйте /menu"
+			_, err := bot.Send(msg)
+			if err != nil {
+				log.Printf("не удалость ответить на сообщение админа")
+			}
 		}
+
 	}
 
 }
@@ -59,6 +66,7 @@ func handleCommand(command *tgbotapi.Message) {
 	msg := tgbotapi.NewMessage(command.From.ID, "")
 	switch {
 	case command.Command() == "start":
+		AddClientInDB.AddOrder = false
 		msg.Text = "Я бот помошник для покупки автомобиля вашей мечты . \n" +
 			"Если у вас появтся дополнительные вопросы свяжитесь с нашим менеджером " + manager
 		msg.ReplyMarkup = tgbotapi.NewReplyKeyboard(
@@ -72,6 +80,7 @@ func handleCommand(command *tgbotapi.Message) {
 			),
 		)
 	case command.Command() == "menu":
+		AddClientInDB.AddOrder = false
 		msg.Text = "Используйте встроенную клавиатуру телеграмма"
 		msg.ReplyMarkup = tgbotapi.NewReplyKeyboard(
 			tgbotapi.NewKeyboardButtonRow(

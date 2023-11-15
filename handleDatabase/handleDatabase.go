@@ -40,9 +40,9 @@ type Car struct {
 func connectDB() {
 	cfg := mysql.Config{
 		User:   os.Getenv("root@localhost"),
-		Passwd: os.Getenv(GetPass()),
+		Passwd: os.Getenv(getPass()),
 		Net:    "tcp",
-		Addr:   GetAdr(),
+		Addr:   getAdr(),
 		DBName: "cars",
 	}
 	// Get a database handle.
@@ -59,7 +59,7 @@ func connectDB() {
 	}
 }
 
-func GetPass() string { //read password from file
+func getPass() string { //read password from file
 	file, _ := os.Open("configDB.json")
 	decoder := json.NewDecoder(file)
 	configuration := Pass{}
@@ -70,7 +70,7 @@ func GetPass() string { //read password from file
 	return configuration.Password
 }
 
-func GetAdr() string { //read Ip from file
+func getAdr() string { //read Ip from file
 	file, _ := os.Open("configIP.json")
 	decoder := json.NewDecoder(file)
 	configuration := Pass{}
@@ -111,15 +111,14 @@ func ReadAll() ([]Car, error) {
 
 func AddNewCar(newcar Car) (int, error) {
 	connectDB()
-	fmt.Print(newcar)
 	result, err := db.Exec("INSERT INTO cars (brand, model, country, year, status, statusBool,enginetype, enginevolume,horsepower, transmission,torque, drivetype, color, milage, price, other, IsCompleted) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 		newcar.Brand, newcar.Model, newcar.Country, newcar.Year, newcar.Status, newcar.StatusBool, newcar.Enginetype, newcar.Enginevolume, newcar.Horsepower, newcar.Torque, newcar.Transmission, newcar.DriveType, newcar.Color, newcar.Mileage, newcar.Price, newcar.Other, newcar.IsCompleted)
 	if err != nil {
-		return 100, fmt.Errorf("addCar: %v", err)
+		return 0, fmt.Errorf("addCar: %v", err)
 	}
 	id, err := result.LastInsertId()
 	if err != nil {
-		return 200, fmt.Errorf("getID: %v", err)
+		return 0, fmt.Errorf("getID: %v", err)
 	}
 	return int(id), nil
 }

@@ -13,8 +13,8 @@ var (
 	bot, _     = tgbotapi.NewBotAPI(api.GetApiToken())
 	AddCar     = false //индикатор перехода в состояние добавления машины
 	UpdateHere int     //счетчик по обновлениям машины
+	newcar     handleDatabase.Car
 )
-var newcar handleDatabase.Car
 
 func GetUpdates(text string, msg tgbotapi.MessageConfig) {
 

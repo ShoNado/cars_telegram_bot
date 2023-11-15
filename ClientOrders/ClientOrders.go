@@ -19,15 +19,6 @@ func ClientFavorites(message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
 	}
 }
 
-func NewOrder(message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
-	msg.Text = "Создание нового заказа"
-
-	if _, err := bot.Send(msg); err != nil {
-		log.Printf("Не удалось ответить на сообщение")
-		panic(err)
-	}
-}
-
 func OrdersList(message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
 	msg.Text = "Список заказов от клиентов"
 
@@ -35,4 +26,8 @@ func OrdersList(message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
 		log.Printf("Не удалось ответить на сообщение")
 		panic(err)
 	}
+}
+
+func WarnClient(id int) {
+
 }
