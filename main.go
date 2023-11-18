@@ -6,6 +6,7 @@ import (
 	api "cars_telegram_bot/handleAPI"
 	"cars_telegram_bot/user"
 	"context"
+	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
 	"os"
@@ -54,7 +55,7 @@ func receiveUpdates(ctx context.Context, updates tgbotapi.UpdatesChannel) {
 }
 
 func handleUpdate(update tgbotapi.Update) {
-
+	fmt.Printf("%v (%v): %v\n", update.Message.From.UserName, update.Message.From.ID, update.Message.Text)
 	adminStatus := Admin.CheckForAdmin(update.SentFrom().ID)
 	switch {
 	// Handle messages

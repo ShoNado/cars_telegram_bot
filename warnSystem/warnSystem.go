@@ -9,19 +9,20 @@ import (
 
 var (
 	bot, _    = tgbotapi.NewBotAPI(api.GetApiToken())
-	adminList = []int64{
-		362859506, //лиза
-		//231043417, //я
+	AdminList = []int64{
+		//362859506, //лиза
+		231043417, //я
 		//314539937, //дима
 	}
 )
 
 func WarnAdmin(profile usersDB.UserProfile, id int) error {
 	var err error
-	for _, admin := range adminList {
+	for _, admin := range AdminList {
 		msg := tgbotapi.NewMessage(admin, fmt.Sprintf("Получен новый заказ от пользователя %v\n"+
-			"Время получения заявки: %v\n"+"Контакты клиента %v %v)",
-			profile.UserName, profile.OrderTime, profile.NameFromUser, profile.PhoneNumber))
+			"Время получения заявки: %v.%v.%v %v:%v\n"+"Контакты клиента %v %v)",
+			profile.UserName, profile.OrderTime.Day(), profile.OrderTime.Month(), profile.OrderTime.Year(),
+			profile.OrderTime.Hour(), profile.OrderTime.Minute(), profile.NameFromUser, profile.PhoneNumber))
 		msg.ReplyMarkup = tgbotapi.NewReplyKeyboard(
 			tgbotapi.NewKeyboardButtonRow(
 				tgbotapi.NewKeyboardButton(fmt.Sprintf(fmt.Sprintf("Подтвердить принятие заказа %v", id))),
@@ -29,5 +30,21 @@ func WarnAdmin(profile usersDB.UserProfile, id int) error {
 			))
 		_, err = bot.Send(msg)
 	}
+
 	return err
+}
+
+func WarnClient(id int, text string) {
+	tgID, err := usersDB.GetTgID(id)
+	msg := tgbotapi.NewMessage(int64(tgID), fmt.Sprintf("Что-то пошло не так"))
+	if err != nil {
+		fmt.Println("что-то пошло не так")
+	}
+	if text == "Заказ" {
+		msg.Text = fmt.Sprintf("Ваш заказ подвержден менеджером")
+	} else if text == "Работа" {
+		msg.Text = fmt.Sprintf("Менеджер работает с вашим заказом")
+	}
+
+	bot.Send(msg)
 }

@@ -2,6 +2,7 @@ package ClientOrders
 
 import (
 	api "cars_telegram_bot/handleAPI"
+	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
 )
@@ -11,23 +12,10 @@ var (
 )
 
 func ClientFavorites(message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
-	msg.Text = "Ваше избранное"
+	msg.Text = fmt.Sprintf("Ваше избранное:\n\n В разрабокте")
 
 	if _, err := bot.Send(msg); err != nil {
 		log.Printf("Не удалось ответить на сообщение")
 		panic(err)
 	}
-}
-
-func OrdersList(message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
-	msg.Text = "Список заказов от клиентов"
-
-	if _, err := bot.Send(msg); err != nil {
-		log.Printf("Не удалось ответить на сообщение")
-		panic(err)
-	}
-}
-
-func WarnClient(id int) {
-
 }

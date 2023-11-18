@@ -21,8 +21,16 @@ var (
 func NewOrder(message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
 	AddOrder = true
 	UpdateOrder = 1
-	profile.UserName = message.From.UserName
-	profile.NameFromTg = message.From.LastName + " " + message.From.FirstName
+	if message.From.UserName != "" {
+		profile.UserName = message.From.UserName
+	} else {
+		profile.UserName = "no username"
+	}
+	if message.From.LastName != "" || message.From.FirstName != "" {
+		profile.NameFromTg = message.From.LastName + " " + message.From.FirstName
+	} else {
+		profile.NameFromTg = "no name from tg"
+	}
 	profile.TgID = message.From.ID
 	msg.Text = fmt.Sprintf("Оставьте заявку о том какой автомобиль вы бы хоели заказать. "+
 		"После подачи заявки наш менеджер подберет автомобиль наиболее подходящий под ваши параметры и свяжется с вами."+
@@ -90,7 +98,7 @@ func OrderUpdate(message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
 		profile.Engine = text
 		if profile.Engine != "" {
 			UpdateOrder += 1
-			msg.Text = fmt.Sprintf("Какую трансмиссию вы хотите (автоматичекска/механическая)?")
+			msg.Text = fmt.Sprintf("Какую трансмиссию вы хотите (автоматическая/механическая)?")
 			bot.Send(msg)
 		}
 	case 7:
@@ -119,6 +127,7 @@ func OrderUpdate(message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
 
 			profile.IsCompleted = true
 			profile.OrderTime = time.Now()
+			fmt.Println(profile)
 			id, err := usersDB.AddNewOrder(profile)
 			if err != nil {
 				msg.Text += fmt.Sprintf("\nЧто-то пошло не так при добавлении в базу данных.")
