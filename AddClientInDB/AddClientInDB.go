@@ -127,7 +127,7 @@ func OrderUpdate(message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
 
 			profile.IsCompleted = true
 			profile.OrderTime = time.Now()
-			fmt.Println(profile)
+
 			id, err := usersDB.AddNewOrder(profile)
 			if err != nil {
 				msg.Text += fmt.Sprintf("\nЧто-то пошло не так при добавлении в базу данных.")

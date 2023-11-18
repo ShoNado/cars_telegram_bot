@@ -156,7 +156,7 @@ func handleAdminCommand(command *tgbotapi.Message) {
 
 	case command.Command() == "stop":
 		add.AddCar = false
-		msg.Text = fmt.Sprintf("Прерывано добавление машины\n /menu")
+		msg.Text = fmt.Sprintf("Прервано добавление машины\n /menu")
 	case command.Command() == "help":
 		msg.Text = "Список команд: \n" +
 			"/start \n" +

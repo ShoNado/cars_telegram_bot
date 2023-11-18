@@ -101,23 +101,28 @@ func handleCommand(command *tgbotapi.Message) {
 			"/order - новая заявка на подбор и заказ автомобиля \n" +
 			"\nЕсли у вас есть какие-то дополнительные вопросы можете связатся с нашим менеджером " + manager
 	case command.Command() == "myorder":
-		profile, _ := usersDB.GetClientOrder(int(command.From.ID))
-		msg.Text = fmt.Sprintf("Данные о заказе №%v\nКонтактные данные человека:\n%v(%v) %v\n"+
-			"Пожелание клиента по цене:\n%v\nПожелание клиента по бренду/модели:\n%v\nПожелания клиента по двигателю:\n%v\n"+
-			"Пожелаения клиенту по коробке передач:\n%v\nПожелания клиенту по цвету:\n%v\nДополнительные пожелания:\n%v\nВремя заказа:\nВ разрабокте\n\n",
-			profile.Id, profile.NameFromUser, profile.UserName, profile.PhoneNumber, profile.Price, profile.BrandCountryModel, profile.Engine, profile.Transmission,
-			profile.Color, profile.Other)
-		if profile.IsAdminSaw {
-			msg.Text += "Потверждено администратором"
+		profile, err := usersDB.GetClientOrder(int(command.From.ID))
+		if err != nil {
+			msg.Text = fmt.Sprintf("У вас еще нет заказов")
 		} else {
-			msg.Text += "Не подтверждено администратором"
+			msg.Text = fmt.Sprintf("Данные о заказе №%v\nКонтактные данные человека:\n%v(%v) %v\n"+
+				"Пожелание клиента по цене:\n%v\nПожелание клиента по бренду/модели:\n%v\nПожелания клиента по двигателю:\n%v\n"+
+				"Пожелаения клиенту по коробке передач:\n%v\nПожелания клиенту по цвету:\n%v\nДополнительные пожелания:\n%v\nВремя заказа:\nВ разрабокте\n\n",
+				profile.Id, profile.NameFromUser, profile.UserName, profile.PhoneNumber, profile.Price, profile.BrandCountryModel, profile.Engine, profile.Transmission,
+				profile.Color, profile.Other)
+			if profile.IsAdminSaw {
+				msg.Text += "Потверждено администратором"
+			} else {
+				msg.Text += "Не подтверждено администратором"
+			}
+			if profile.IsInWork {
+				msg.Text += fmt.Sprintf("\nВзято в работу")
+			} else {
+				msg.Text += fmt.Sprintf("\nНе взято в работу")
+			}
+
 		}
-		if profile.IsInWork {
-			msg.Text += fmt.Sprintf("\nВзято в работу")
-		} else {
-			msg.Text += fmt.Sprintf("\nНе взято в работу")
-		}
-		msg.Text += fmt.Sprintf("\nНе взято в работу\n\n /menu")
+		msg.Text += fmt.Sprintf("\n\n /menu")
 
 	case strings.HasPrefix(command.Command(), "car_"):
 		id, err := strconv.Atoi(command.Command()[4:])
