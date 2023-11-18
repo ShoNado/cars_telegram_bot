@@ -84,14 +84,20 @@ func HandleAdminMessage(message *tgbotapi.Message) {
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 		id, _ := strconv.Atoi(message.Text[53:])
 		warnSystem.WarnClient(id, "Заказ")
-		usersDB.AdminSeen(id)
+		err := usersDB.AdminSeen(id)
+		if err != nil {
+			fmt.Println("ошибка в смене статуса Admin seen")
+		}
 		msg.Text = "Заказ успешно подтвержден"
 		bot.Send(msg)
 	case strings.HasPrefix(message.Text, "Посмотреть подробнее о заявке "):
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 		id, _ := strconv.Atoi(message.Text[56:])
 		warnSystem.WarnClient(id, "Заказ")
-		usersDB.AdminSeen(id)
+		err := usersDB.AdminSeen(id)
+		if err != nil {
+			fmt.Println("ошибка в смене статуса Admin seen")
+		}
 		profile, _, err := usersDB.ShowOrder(id)
 		if err != nil {
 			msg.Text = "произошла какая-то ошибка при получении информации о заказе"
@@ -211,7 +217,10 @@ func handleAdminCommand(command *tgbotapi.Message) {
 
 	case strings.HasPrefix(command.Command(), "work_"):
 		id, _ := strconv.Atoi(command.Command()[5:])
-		usersDB.AdminGotInWork(id)
+		err := usersDB.AdminGotInWork(id)
+		if err != nil {
+			fmt.Println("ошибка в смене статуса Admin works")
+		}
 		warnSystem.WarnClient(id, "Работа")
 		msg.Text = fmt.Sprintf("Заказ взят №%v в работу\n/menu ", id)
 
