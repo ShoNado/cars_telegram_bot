@@ -1,19 +1,9 @@
 package warnSystem
 
 import (
-	api "cars_telegram_bot/handleAPI"
 	"cars_telegram_bot/handleUsersDB"
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-)
-
-var (
-	bot, _    = tgbotapi.NewBotAPI(api.GetApiToken())
-	AdminList = []int64{
-		362859506, //лиза
-		231043417, //я
-		314539937, //дима
-	}
 )
 
 func WarnAdmin(profile handleUsersDB.UserProfile, id int) error {
