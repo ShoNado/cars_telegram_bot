@@ -3,6 +3,7 @@ package handleUsersDB
 import (
 	"cars_telegram_bot/handleCarDB"
 	"database/sql"
+	"errors"
 	"fmt"
 	"github.com/go-sql-driver/mysql"
 	"log"
@@ -83,7 +84,7 @@ func ShowOrder(id int) (UserProfile, []uint8, error) {
 	if err := result.Scan(&profile.Id, &profile.IsAdmin, &profile.TgID, &profile.NameFromUser, &profile.NameFromTg, &profile.UserName, &profile.PhoneNumber,
 		&profile.Price, &profile.BrandCountryModel, &profile.Engine, &profile.Transmission, &profile.Color,
 		&profile.Other, &time1, &profile.IsCompleted, &profile.IsAdminSaw, &profile.IsInWork); err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return profile, time1, fmt.Errorf("ShowOrder %d: no such order", id)
 		}
 		return profile, time1, fmt.Errorf("ShowOrder %d: %v", id, err)
@@ -119,7 +120,7 @@ func GetTgID(id int) (int, error) {
 	if err := result.Scan(&profile.Id, &profile.IsAdmin, &profile.TgID, &profile.NameFromUser, &profile.NameFromTg, &profile.UserName, &profile.PhoneNumber,
 		&profile.Price, &profile.BrandCountryModel, &profile.Engine, &profile.Transmission, &profile.Color,
 		&profile.Other, &time1, &profile.IsCompleted, &profile.IsAdminSaw, &profile.IsInWork); err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return int(profile.TgID), fmt.Errorf("GetTgID %d: no such user", id)
 		}
 		return int(profile.TgID), fmt.Errorf("TgIDsById %d: %v", id, err)
@@ -136,10 +137,10 @@ func GetClientOrder(TgId int) (UserProfile, error) {
 	if err := result.Scan(&profile.Id, &profile.IsAdmin, &profile.TgID, &profile.NameFromUser, &profile.NameFromTg, &profile.UserName, &profile.PhoneNumber,
 		&profile.Price, &profile.BrandCountryModel, &profile.Engine, &profile.Transmission, &profile.Color,
 		&profile.Other, &time1, &profile.IsCompleted, &profile.IsAdminSaw, &profile.IsInWork); err != nil {
-		if err == sql.ErrNoRows {
-			return profile, fmt.Errorf("GetTgID %d: no such user", profile)
+		if errors.Is(err, sql.ErrNoRows) {
+			return profile, fmt.Errorf("GetTgID %v: no such user", profile)
 		}
-		return profile, fmt.Errorf("TgIDsById %d: %v", profile, err)
+		return profile, fmt.Errorf("TgIDsById %v %v", profile, err)
 	}
 
 	return profile, nil
@@ -155,4 +156,21 @@ func AdminGotInWork(id int) error {
 	connectDB()
 	_, err := db.Exec("UPDATE users SET IsInWork = true WHERE id=?", id)
 	return err
+}
+
+func GetAdminList() []int64 {
+	connectDB()
+	var adminsList []int64
+	ordersListDB, _ := db.Query("SELECT * FROM users WHERE IsAdmin = ?", true)
+	for ordersListDB.Next() {
+		var profile UserProfile
+		var time1 []uint8
+		if err := ordersListDB.Scan(&profile.Id, &profile.IsAdmin, &profile.TgID, &profile.NameFromUser, &profile.NameFromTg, &profile.UserName, &profile.PhoneNumber,
+			&profile.Price, &profile.BrandCountryModel, &profile.Engine, &profile.Transmission, &profile.Color,
+			&profile.Other, &time1, &profile.IsCompleted, &profile.IsAdminSaw, &profile.IsInWork); err != nil {
+			return nil
+		}
+		adminsList = append(adminsList, profile.TgID)
+	}
+	return adminsList
 }

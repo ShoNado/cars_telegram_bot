@@ -18,7 +18,7 @@ var (
 
 func WarnAdmin(profile handleUsersDB.UserProfile, id int) error {
 	var err error
-	for _, admin := range AdminList {
+	for _, admin := range handleUsersDB.GetAdminList() {
 		msg := tgbotapi.NewMessage(admin, fmt.Sprintf("Получен новый заказ от пользователя %v\n"+
 			"Время получения заявки: %v.%v.%v %v:%v\n"+"Контакты клиента %v %v)",
 			profile.UserName, profile.OrderTime.Day(), profile.OrderTime.Month(), profile.OrderTime.Year(),

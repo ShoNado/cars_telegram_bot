@@ -25,7 +25,7 @@ var (
 
 func CheckForAdmin(ID int64) bool {
 	ok := false
-	for _, op := range warnSystem.AdminList {
+	for _, op := range handleUsersDB.GetAdminList() {
 		if op == ID {
 			ok = true
 		}
