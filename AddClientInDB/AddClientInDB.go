@@ -2,7 +2,7 @@ package AddClientInDB
 
 import (
 	api "cars_telegram_bot/handleAPI"
-	"cars_telegram_bot/usersDB"
+	"cars_telegram_bot/handleUsersDB"
 	"cars_telegram_bot/warnSystem"
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -13,7 +13,7 @@ var (
 	bot, _      = tgbotapi.NewBotAPI(api.GetApiToken())
 	AddOrder    = false
 	UpdateOrder int
-	profile     usersDB.UserProfile
+	profile     handleUsersDB.UserProfile
 	text        string
 	manager     = "@blyaD1ma"
 )
@@ -128,12 +128,13 @@ func OrderUpdate(message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
 			profile.IsCompleted = true
 			profile.OrderTime = time.Now()
 
-			id, err := usersDB.AddNewOrder(profile)
+			id, err := handleUsersDB.AddNewOrder(profile)
 			if err != nil {
 				msg.Text += fmt.Sprintf("\nЧто-то пошло не так при добавлении в базу данных.")
 			} else {
 				msg.Text += fmt.Sprintf("\n\nНомер вашей заявки: %v", id)
 			}
+
 			err = warnSystem.WarnAdmin(profile, id)
 			if err != nil {
 				msg.Text += fmt.Sprintf("\nЧто-то пошло не так при отправке заявке администратору.")

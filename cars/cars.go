@@ -1,8 +1,8 @@
-package CarsAvailable
+package cars
 
 import (
 	api "cars_telegram_bot/handleAPI"
-	"cars_telegram_bot/handleDatabase"
+	"cars_telegram_bot/handleCarDB"
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
@@ -14,7 +14,7 @@ var (
 
 func ShowCarsListAvailable(msg tgbotapi.MessageConfig) {
 	msg.Text = "Доступные машины:\n "
-	carlist, err := handleDatabase.ReadAll()
+	carlist, err := handleCarDB.ReadAll()
 	if err != nil {
 		log.Printf("getting car list: %v", err)
 	}
@@ -35,7 +35,7 @@ func ShowCarsListAvailable(msg tgbotapi.MessageConfig) {
 
 func ShowCarsListOnWay(msg tgbotapi.MessageConfig) {
 	msg.Text = "Машины в пути:\n "
-	carlist, err := handleDatabase.ReadAll()
+	carlist, err := handleCarDB.ReadAll()
 	if err != nil {
 		log.Printf("getting car list: %v", err)
 	}

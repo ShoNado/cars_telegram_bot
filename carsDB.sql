@@ -16,7 +16,7 @@ CREATE TABLE cars (
                         color        VARCHAR(255),
                         milage       VARCHAR(255),
                         price        varchar(255),
-                        other        VARCHAR(1023),
+                        other        VARCHAR(10000),
                         IsCompleted  BOOLEAN,
                         PRIMARY KEY (`id`)
 );

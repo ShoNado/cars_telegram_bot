@@ -2,11 +2,11 @@ package user
 
 import (
 	"cars_telegram_bot/AddClientInDB"
-	"cars_telegram_bot/CarsAvailable"
-	"cars_telegram_bot/ClientOrders"
+	"cars_telegram_bot/cars"
+
 	api "cars_telegram_bot/handleAPI"
-	"cars_telegram_bot/handleDatabase"
-	"cars_telegram_bot/usersDB"
+	"cars_telegram_bot/handleCarDB"
+	"cars_telegram_bot/handleUsersDB"
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
@@ -33,15 +33,15 @@ func HandleMessage(message *tgbotapi.Message) {
 	switch {
 	case message.Text == btn1:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
-		CarsAvailable.ShowCarsListAvailable(msg) //передаем туда msg чтобы удалить клавиатуру
+		cars.ShowCarsListAvailable(msg) //передаем туда msg чтобы удалить клавиатуру
 
 	case message.Text == btn2:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
-		CarsAvailable.ShowCarsListOnWay(msg)
+		cars.ShowCarsListOnWay(msg)
 
 	case message.Text == btn3:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
-		ClientOrders.ClientFavorites(message, msg)
+		//to do
 
 	case message.Text == btn4:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
@@ -101,7 +101,7 @@ func handleCommand(command *tgbotapi.Message) {
 			"/order - новая заявка на подбор и заказ автомобиля \n" +
 			"\nЕсли у вас есть какие-то дополнительные вопросы можете связатся с нашим менеджером " + manager
 	case command.Command() == "myorder":
-		profile, err := usersDB.GetClientOrder(int(command.From.ID))
+		profile, err := handleUsersDB.GetClientOrder(int(command.From.ID))
 		if err != nil {
 			msg.Text = fmt.Sprintf("У вас еще нет заказов")
 		} else {
@@ -130,7 +130,7 @@ func handleCommand(command *tgbotapi.Message) {
 			msg.Text = "Что-то не так с командой"
 			break
 		}
-		car, err := handleDatabase.ShowCar(id)
+		car, err := handleCarDB.ShowCar(id)
 		if err != nil {
 			msg.Text = "Не удалось получить информацию о машине"
 			break

@@ -1,11 +1,11 @@
 package Admin
 
 import (
-	add "cars_telegram_bot/AddEditDeleteCarDB"
-	"cars_telegram_bot/CarsAvailable"
+	add "cars_telegram_bot/AddCar"
+	"cars_telegram_bot/cars"
 	api "cars_telegram_bot/handleAPI"
-	"cars_telegram_bot/handleDatabase"
-	"cars_telegram_bot/usersDB"
+	"cars_telegram_bot/handleCarDB"
+	"cars_telegram_bot/handleUsersDB"
 	"cars_telegram_bot/warnSystem"
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -42,11 +42,11 @@ func HandleAdminMessage(message *tgbotapi.Message) {
 	switch {
 	case message.Text == btn1:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
-		CarsAvailable.ShowCarsListAvailable(msg)
+		cars.ShowCarsListAvailable(msg)
 
 	case message.Text == btn2:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
-		CarsAvailable.ShowCarsListOnWay(msg)
+		cars.ShowCarsListOnWay(msg)
 
 	case message.Text == btn3:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
@@ -54,7 +54,7 @@ func HandleAdminMessage(message *tgbotapi.Message) {
 
 	case message.Text == btn4:
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
-		profiles := usersDB.ShowAllOrders()
+		profiles := handleUsersDB.ShowAllOrders()
 		count := 1
 		for _, profile := range profiles {
 			msg.Text += fmt.Sprintf("%v. %v (%v) %v\n Тут будет время получения заявки\nУзнать подробнее /order_%v \n\n", count, profile.NameFromUser, profile.UserName, profile.PhoneNumber, profile.Id)
@@ -69,7 +69,7 @@ func HandleAdminMessage(message *tgbotapi.Message) {
 			msg.Text = "Что-то не так с айди"
 			break
 		}
-		err = handleDatabase.DeleteCar(id)
+		err = handleCarDB.DeleteCar(id)
 		if err != nil {
 			msg.Text = "Что-то не так с удалением"
 		} else {
@@ -84,7 +84,7 @@ func HandleAdminMessage(message *tgbotapi.Message) {
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 		id, _ := strconv.Atoi(message.Text[53:])
 		warnSystem.WarnClient(id, "Заказ")
-		err := usersDB.AdminSeen(id)
+		err := handleUsersDB.AdminSeen(id)
 		if err != nil {
 			fmt.Println("ошибка в смене статуса Admin seen")
 		}
@@ -94,15 +94,15 @@ func HandleAdminMessage(message *tgbotapi.Message) {
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 		id, _ := strconv.Atoi(message.Text[56:])
 		warnSystem.WarnClient(id, "Заказ")
-		err := usersDB.AdminSeen(id)
+		err := handleUsersDB.AdminSeen(id)
 		if err != nil {
 			fmt.Println("ошибка в смене статуса Admin seen")
 		}
-		profile, _, err := usersDB.ShowOrder(id)
+		profile, _, err := handleUsersDB.ShowOrder(id)
 		if err != nil {
 			msg.Text = "произошла какая-то ошибка при получении информации о заказе"
 		} else {
-			msg.Text = fmt.Sprintf("Данные о заказе №%v\nКонтактные данные человека:\n%v(%v) %v\n"+
+			msg.Text = fmt.Sprintf("Данные о заказе №%v\nКонтактные данные человека:\n%v(@%v) %v\n"+
 				"Пожелание клиента по цене:\n%v\nПожелание клиента по бренду/модели:\n%v\nПожелания клиента по двигателю:\n%v\n"+
 				"Пожелаения клиенту по коробке передач:\n%v\nПожелания клиенту по цвету:\n%v\nДополнительные пожелания:\n%v\nВремя заказа:\nВ разрабокте\n\n",
 				id, profile.NameFromUser, profile.UserName, profile.PhoneNumber, profile.Price, profile.BrandCountryModel, profile.Engine, profile.Transmission,
@@ -168,7 +168,7 @@ func handleAdminCommand(command *tgbotapi.Message) {
 			msg.Text = "Что-то не так с командой"
 			break
 		}
-		car, err := handleDatabase.ShowCar(id)
+		car, err := handleCarDB.ShowCar(id)
 		if err != nil {
 			msg.Text = "Не удалось получить информацию о машине"
 			break
@@ -197,7 +197,7 @@ func handleAdminCommand(command *tgbotapi.Message) {
 		msg.Text = "В разработке"
 	case strings.HasPrefix(command.Command(), "order_"):
 		id, _ := strconv.Atoi(command.Command()[6:])
-		profile, _, _ := usersDB.ShowOrder(id)
+		profile, _, _ := handleUsersDB.ShowOrder(id)
 		msg.Text = fmt.Sprintf("Данные о заказе №%v\nКонтактные данные человека:\n%v(%v) %v\n"+
 			"Пожелание клиента по цене:\n%v\nПожелание клиента по бренду/модели:\n%v\nПожелания клиента по двигателю:\n%v\n"+
 			"Пожелаения клиенту по коробке передач:\n%v\nПожелания клиенту по цвету:\n%v\nДополнительные пожелания:\n%v\nВремя заказа:\nВ разработке\n",
@@ -217,7 +217,7 @@ func handleAdminCommand(command *tgbotapi.Message) {
 
 	case strings.HasPrefix(command.Command(), "work_"):
 		id, _ := strconv.Atoi(command.Command()[5:])
-		err := usersDB.AdminGotInWork(id)
+		err := handleUsersDB.AdminGotInWork(id)
 		if err != nil {
 			fmt.Println("ошибка в смене статуса Admin works")
 		}

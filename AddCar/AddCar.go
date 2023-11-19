@@ -1,8 +1,8 @@
-package AddEditDeleteCarDB
+package AddCar
 
 import (
 	api "cars_telegram_bot/handleAPI"
-	"cars_telegram_bot/handleDatabase"
+	"cars_telegram_bot/handleCarDB"
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
@@ -13,7 +13,7 @@ var (
 	bot, _     = tgbotapi.NewBotAPI(api.GetApiToken())
 	AddCar     = false //индикатор перехода в состояние добавления машины
 	UpdateHere int     //счетчик по обновлениям машины
-	newcar     handleDatabase.Car
+	newcar     handleCarDB.Car
 )
 
 func GetUpdates(text string, msg tgbotapi.MessageConfig) {
@@ -157,7 +157,7 @@ func GetUpdates(text string, msg tgbotapi.MessageConfig) {
 		msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 		if text == "Да" {
 			newcar.IsCompleted = true
-			id, err := handleDatabase.AddNewCar(newcar)
+			id, err := handleCarDB.AddNewCar(newcar)
 			if err != nil {
 				msg.Text = fmt.Sprintf("Произошла ошибка при добавлении машины %v", id)
 			} else {
@@ -167,7 +167,7 @@ func GetUpdates(text string, msg tgbotapi.MessageConfig) {
 			AddCar = false //выходим из режима добавления машины
 		} else if text == "Нет" {
 			newcar.IsCompleted = false
-			id, err := handleDatabase.AddNewCar(newcar)
+			id, err := handleCarDB.AddNewCar(newcar)
 			if err != nil {
 				msg.Text = fmt.Sprintf("Произошла ошибка при добавлении машины, в которой что-то не так")
 			} else {

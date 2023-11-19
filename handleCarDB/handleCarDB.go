@@ -1,4 +1,4 @@
-package handleDatabase
+package handleCarDB
 
 import (
 	"database/sql"
@@ -40,9 +40,9 @@ type Car struct {
 func connectDB() {
 	cfg := mysql.Config{
 		User:   os.Getenv("root@localhost"),
-		Passwd: os.Getenv(getPass()),
+		Passwd: os.Getenv(GetPass()),
 		Net:    "tcp",
-		Addr:   getAdr(),
+		Addr:   GetAdr(),
 		DBName: "cars",
 	}
 	// Get a database handle.
@@ -59,8 +59,8 @@ func connectDB() {
 	}
 }
 
-func getPass() string { //read password from file
-	file, _ := os.Open("configDB.json")
+func GetPass() string { //read password from file
+	file, _ := os.Open("config/configDB.json")
 	decoder := json.NewDecoder(file)
 	configuration := Pass{}
 	err := decoder.Decode(&configuration)
@@ -70,8 +70,8 @@ func getPass() string { //read password from file
 	return configuration.Password
 }
 
-func getAdr() string { //read Ip from file
-	file, _ := os.Open("configIP.json")
+func GetAdr() string { //read Ip from file
+	file, _ := os.Open("config/configIP.json")
 	decoder := json.NewDecoder(file)
 	configuration := Pass{}
 	err := decoder.Decode(&configuration)

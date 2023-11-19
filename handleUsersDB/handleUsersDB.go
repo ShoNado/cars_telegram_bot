@@ -1,8 +1,8 @@
-package usersDB
+package handleUsersDB
 
 import (
+	"cars_telegram_bot/handleCarDB"
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"github.com/go-sql-driver/mysql"
 	"log"
@@ -39,9 +39,9 @@ type UserProfile struct {
 func connectDB() {
 	cfg := mysql.Config{
 		User:   os.Getenv("root@localhost"),
-		Passwd: os.Getenv(getPass()),
+		Passwd: os.Getenv(handleCarDB.GetPass()),
 		Net:    "tcp",
-		Addr:   getAdr(),
+		Addr:   handleCarDB.GetAdr(),
 		DBName: "users",
 	}
 	// Get a database handle.
@@ -56,27 +56,6 @@ func connectDB() {
 	if pingErr != nil {
 		log.Fatal(pingErr)
 	}
-}
-func getPass() string { //read password from file
-	file, _ := os.Open("configDB.json")
-	decoder := json.NewDecoder(file)
-	configuration := Pass{}
-	err := decoder.Decode(&configuration)
-	if err != nil {
-		log.Panic(err)
-	}
-	return configuration.Password
-}
-
-func getAdr() string { //read Ip from file
-	file, _ := os.Open("configIP.json")
-	decoder := json.NewDecoder(file)
-	configuration := Pass{}
-	err := decoder.Decode(&configuration)
-	if err != nil {
-		log.Panic(err)
-	}
-	return configuration.Password
 }
 
 func AddNewOrder(profile UserProfile) (int, error) {

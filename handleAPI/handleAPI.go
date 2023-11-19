@@ -11,7 +11,7 @@ type Config struct {
 }
 
 func GetApiToken() string { //read token from file
-	file, _ := os.Open("config.json")
+	file, _ := os.Open("config/config.json")
 	decoder := json.NewDecoder(file)
 	configuration := Config{}
 	err := decoder.Decode(&configuration)

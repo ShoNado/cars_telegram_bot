@@ -2,7 +2,7 @@ package warnSystem
 
 import (
 	api "cars_telegram_bot/handleAPI"
-	"cars_telegram_bot/usersDB"
+	"cars_telegram_bot/handleUsersDB"
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
@@ -16,7 +16,7 @@ var (
 	}
 )
 
-func WarnAdmin(profile usersDB.UserProfile, id int) error {
+func WarnAdmin(profile handleUsersDB.UserProfile, id int) error {
 	var err error
 	for _, admin := range AdminList {
 		msg := tgbotapi.NewMessage(admin, fmt.Sprintf("Получен новый заказ от пользователя %v\n"+
@@ -35,7 +35,7 @@ func WarnAdmin(profile usersDB.UserProfile, id int) error {
 }
 
 func WarnClient(id int, text string) {
-	tgID, err := usersDB.GetTgID(id)
+	tgID, err := handleUsersDB.GetTgID(id)
 	msg := tgbotapi.NewMessage(int64(tgID), fmt.Sprintf("Что-то пошло не так"))
 	if err != nil {
 		fmt.Println("что-то пошло не так")
