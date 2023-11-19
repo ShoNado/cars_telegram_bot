@@ -158,19 +158,19 @@ func AdminGotInWork(id int) error {
 	return err
 }
 
-func GetAdminList() []int64 {
+func GetAdminList() ([]int64, error) {
 	connectDB()
 	var adminsList []int64
-	ordersListDB, _ := db.Query("SELECT * FROM users WHERE IsAdmin = ?", true)
+	ordersListDB, err := db.Query("SELECT * FROM users WHERE IsAdmin = ?", 1)
 	for ordersListDB.Next() {
 		var profile UserProfile
 		var time1 []uint8
 		if err := ordersListDB.Scan(&profile.Id, &profile.IsAdmin, &profile.TgID, &profile.NameFromUser, &profile.NameFromTg, &profile.UserName, &profile.PhoneNumber,
 			&profile.Price, &profile.BrandCountryModel, &profile.Engine, &profile.Transmission, &profile.Color,
 			&profile.Other, &time1, &profile.IsCompleted, &profile.IsAdminSaw, &profile.IsInWork); err != nil {
-			return nil
+			return nil, err
 		}
 		adminsList = append(adminsList, profile.TgID)
 	}
-	return adminsList
+	return adminsList, err
 }
